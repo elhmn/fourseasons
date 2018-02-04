@@ -1,58 +1,103 @@
-var earth = new Image ();
+var canvas;
+var bckg;
+
+function setBackground ()
+{
+	if (canvas.getContext)
+	{
+		var ctx = canvas.getContext ('2d');
+		ctx.fillStyle = '#3A3A3A';
+		ctx.fillRect (0, 0, 400, 400)
+
+		ctx.fillStyle = '#FFFFFF';
+		ctx.fillRect (40, 40, 320, 320)
+
+		ctx.strokeStyle = '#E2E2E2';
+		ctx.beginPath ();
+		ctx.moveTo (40, 40);
+		for (var i = 40; i < 360; i += 40)
+			for (var j = 40; j < 360; j += 40)
+				ctx.strokeRect (i, j, 40, 40);
+
+		bckg = ctx.getImageData (0, 0, canvas.width, canvas.height);
+		console.log ("OK setBackground");
+	}
+	else
+	{
+		console.log ("KO setBackground");
+	}
+}
+
+function reloadBackground ()
+{
+	if (canvas.getContext)
+	{
+		var ctx = canvas.getContext ('2d');
+		ctx.clearRect (0, 0, 400, 400);
+		ctx.putImageData (bckg, 0, 0);
+		console.log ("OK reloadBackground");
+	}
+	else
+	{
+		console.log ("KO reloadBackground");
+	}
+}
+
+var playButton = new Image ();
 
 function loadImages ()
 {
-	earth.src = 'earth.png';
+	playButton.src = 'enter.png';
 }
 
-function draw (canvas, ctx)
+function setPlayButton ()
 {
-	ctx.fillStyle = 'rgba(0, 255, 0, 1.0)';
-	ctx.fillRect (0, 0, 640, 480)
-
-	ctx.fillStyle = '#ff00ff';
-	ctx.beginPath ();
-	ctx.moveTo (640, 480);
-	ctx.lineTo (640, 0)
-	ctx.lineTo (0, 480)
-	ctx.fill ();
-
-	ctx.drawImage (earth, 0, 0);
-	console.log ("OK Draw");
+	if (canvas.getContext)
+	{
+		var ctx = canvas.getContext ('2d');
+		ctx.fillStyle = '#999999';
+		ctx.fillRect (65, 200, 265, 100)
+		ctx.drawImage (playButton, 60, 110, 280, 280);
+		console.log ("OK setPlayButton");
+	}
+	else
+	{
+		console.log ("KO setPlayButton");
+	}
 }
 
-function clearCanvas (canvas, ctx)
+function mouseHandler (event)
 {
-	ctx.clearRect (0, 0, canvas.width, canvas.height);
-	console.log ("OK Clear");
+	var offLeft = canvas.offsetLeft;
+	var offTop = canvas.offsetTop;
+
+	console.log ("x = " + (event.pageX - offLeft) + " | y = " + (event.pageY - offTop));
+}
+
+function keyHandler (event)
+{
+	console.log ("key Press = " + event.key);
+	switch (event.key)
+	{
+		case "Enter":
+			break;
+		case "Backspace":
+			reloadBackground ();
+			break;
+		default:
+			break;
+	}
 }
 
 function mainMenu ()
 {
-	var opt;
-	var canvas = document.getElementById ('mainMenu');
-	var offLeft = canvas.offsetLeft;
-	console.log ("offLeft = " + offLeft);
-	var offTop = canvas.offsetTop;
-	console.log ("offTop = " + offTop);
+	canvas = document.getElementById ('mainMenu');
 
-	canvas.addEventListener ('click', function (event) {
-		console.log ("x = " + (event.pageX - offLeft) + " | y = " + (event.pageY - offTop));
-		}, false);
+	setBackground ();
+	setPlayButton ();
 
-	if (canvas.getContext)
-	{
-		var ctx = canvas.getContext ('2d');
-
-		draw (canvas, ctx);
-//		clearCanvas (canvas, ctx);
-//		draw (ctx);
-		console.log ("OK");
-	}
-	else
-	{
-		console.log ("KO");
-	}
+	canvas.addEventListener ('click', mouseHandler);
+	document.addEventListener ('keyup', keyHandler, true);
 }
 
-loadImages();
+loadImages ();
