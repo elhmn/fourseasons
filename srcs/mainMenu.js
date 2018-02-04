@@ -28,6 +28,21 @@ function setBackground ()
 	}
 }
 
+function reloadBackground ()
+{
+	if (canvas.getContext)
+	{
+		var ctx = canvas.getContext ('2d');
+		ctx.clearRect (0, 0, 400, 400);
+		ctx.putImageData (bckg, 0, 0);
+		console.log ("OK reloadBackground");
+	}
+	else
+	{
+		console.log ("KO reloadBackground");
+	}
+}
+
 var playButton = new Image ();
 
 function loadImages ()
@@ -40,7 +55,9 @@ function setPlayButton ()
 	if (canvas.getContext)
 	{
 		var ctx = canvas.getContext ('2d');
-		ctx.drawImage (playButton, 0, 0);
+		ctx.fillStyle = '#999999';
+		ctx.fillRect (65, 200, 265, 100)
+		ctx.drawImage (playButton, 60, 110, 280, 280);
 		console.log ("OK setPlayButton");
 	}
 	else
@@ -52,9 +69,7 @@ function setPlayButton ()
 function mouseHandler (event)
 {
 	var offLeft = canvas.offsetLeft;
-	console.log ("offLeft = " + offLeft);
 	var offTop = canvas.offsetTop;
-	console.log ("offTop = " + offTop);
 
 	console.log ("x = " + (event.pageX - offLeft) + " | y = " + (event.pageY - offTop));
 }
@@ -62,6 +77,16 @@ function mouseHandler (event)
 function keyHandler (event)
 {
 	console.log ("key Press = " + event.key);
+	switch (event.key)
+	{
+		case "Enter":
+			break;
+		case "Backspace":
+			reloadBackground ();
+			break;
+		default:
+			break;
+	}
 }
 
 function mainMenu ()
@@ -71,8 +96,8 @@ function mainMenu ()
 	setBackground ();
 	setPlayButton ();
 
-	canvas.addEventListener ('click', mouseHandler, false);
-	canvas.addEventListener ('keyup', keyHandler, false);
+	canvas.addEventListener ('click', mouseHandler);
+	document.addEventListener ('keyup', keyHandler, true);
 }
 
 loadImages ();
