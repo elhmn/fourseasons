@@ -1,3 +1,5 @@
+'use strict';
+
 var entities = [];
 
 var player = null;
@@ -74,19 +76,19 @@ var Hero = function ()
         switch (keyValue)
         {
             case "ArrowRight":
-                n_x += player.speed;
+                n_x += player.object.speed;
                 break;
         
             case "ArrowLeft":
-                n_x -= player.speed;
+                n_x -= player.object.speed;
                 break;
         
             case "ArrowDown":
-                n_y += player.speed;
+                n_y += player.object.speed;
                 break;
 
             case "ArrowUp":
-                n_y -= player.speed;
+                n_y -= player.object.speed;
                 break;
 
             default:
@@ -117,6 +119,7 @@ var Hero = function ()
                 {
                     var tmp = entities[n_y][n_x];
                     entities[n_y][n_x] = player;
+                    player.pos = new Pos(n_x, n_y);
                     if (player.object.wasOnEnd)
                     {
                         entities[old_y][old_x] = EntityType.END;
@@ -128,15 +131,15 @@ var Hero = function ()
                 break;
 
             case EntityType.BLACKHOLE:
-            if (!player.object.isOnBlock && !player.object.isOnAirInfluence)
-            {
-                    this.isAlive = false;
-                    player.partCount++;
+                if (!player.object.isOnBlock && !player.object.isOnAirInfluence)
+                {
+                    player.object.isAlive = false;
+                    player.object.partCount++;
                 }
                 break;
 
             case EntityType.END:
-                if (player.canEndLevel)
+                if (player.object.canEndLevel)
                 {
                     
                  //Start next level;
@@ -147,6 +150,7 @@ var Hero = function ()
                     if (!player.object.isOnBlock && !player.object.isOnAirInfluence)
                     {
                         entities[n_y][n_x] = player;
+                        player.pos = new Pos(n_x, n_y);
                         player.object.wasOnEnd = true;
                     }
                 }
@@ -172,21 +176,23 @@ var Hero = function ()
                 {
                     player.object.isOnAirInfluence = false;
                 }
-                player.isPullDown = true;
-                player.partCount++;
+                player.object.isPullDown = true;
+                player.object.partCount++;
                 break;
 
             case EntityType.WATER:
-                player.speed--;
-                player.partCount++;
+                player.object.speed--;
+                player.object.partCount++;
                 entities[n_y][n_x] = player;
+                player.pos = new Pos(n_x, n_y);
                 entities[old_y][old_x] = EntityType.EMPTY;
                 break;
 
             case EntityType.FIRE:
-                player.speed++;
-                player.partCount++;
+                player.object.speed++;
+                player.object.partCount++;
                 entities[n_y][n_x] = player;
+                player.pos = new Pos(n_x, n_y);
                 entities[old_y][old_x] = EntityType.EMPTY;
                 break;
         }
@@ -215,47 +221,30 @@ var Empty = function ()
 var Water = function ()
 {
     console.log("Water object created");
-    this.alter = function (player)
-    {
-        player.speed = (player.speed < 1) ? 1 : player.speed - 1;
-    }
 };
 
 //Fire speeds player up
 var Fire = function ()
 {
     console.log("Fire object created");
-    this.alter = function (player)
-    {
-        player.speed = (player.speed > player.speedMax) ? speedMax : player.speed + 1;
-    }
 };
 
 //Earth pull you down
 var Earth = function ()
 {
     console.log("Earth object created");
-    this.alter = function (player)
-    {
-        player.isPullDown = true;        
-    }
 };
 
 //
 var Air = function ()
 {
     console.log("Air object created");
-    this.alter = function (player)
-    {
-        //DoSomething
-    }
 };
 
 var BlackHole = function ()
 {
     console.log("BlackHole object created");
 }
-
 
 var CreateEntity = function (entityType, pos)
 {
@@ -356,16 +345,16 @@ var ShowEntityList = function ()
 
 var check_game_state = function ()
 {
-    if (!player.isAlive)
+    if (!player.object.isAlive)
     {
         //reset level;
         console.log("reset level");
-        player.isAlive = true;
+        player.object.isAlive = true;
     }
 
-    if (player.collected == level1.partCount)
+    if (player.object.collected == level1.partCount)
     {
-        player.canEndLevel = true;
+        player.object.canEndLevel = true;
         //
     }
 }
@@ -409,7 +398,7 @@ var run_game = function ()
 
 //      Render and EventSetup
 //        ctx = canvas.getContext('2d');
-        document.addEventListener('keyup', keyHandler, true);
+        document.addEventListener('keyup', keyHandler, false);
         reloadBackground();
         renderGame();
     }
