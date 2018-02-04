@@ -54,6 +54,7 @@ function reloadBackground ()
 var playButton = new Image ();
 var reloadButton = new Image ();
 var backButton = new Image ();
+var particle = new Image ();
 var elemParticle = new Image ();
 var fire = new Image ();
 var water = new Image ();
@@ -66,6 +67,7 @@ function loadImages ()
 	playButton.src = '../img/enter.png';
 	reloadButton.src = '../img/reload.png';
 	backButton.src = '../img/back.png';
+	particle.src = '../img/particle.png';
 	elemParticle.src = '../img/elementary_particle.png';
 	fire.src = '../img/fire.png';
 	water.src = '../img/water.png';
@@ -79,7 +81,12 @@ function setPlayButton ()
     if (canvas !== null && canvas.getContext)
     {
 		var ctx = canvas.getContext ("2d");
+		
+		ctx.font = '48px serif';
 		ctx.fillStyle = '#999999';
+		ctx.strokeStyle = '#999999';
+  		ctx.strokeText('Particles', 165, 100);
+		ctx.drawImage (particle, 125, 125, 250, 250);
 		ctx.fillRect (enterBox [0], enterBox [1], enterBox [2], enterBox [3])
 		ctx.drawImage (playButton, enterBox [0] + 15, enterBox [1] + 10, enterBox [2] - 30, enterBox [3] - 20);
 	}

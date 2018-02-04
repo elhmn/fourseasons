@@ -645,6 +645,19 @@ var keyHandlerGame = function (event)
     console.log(code);
     switch (code)
     {
+        case "b":
+            canvas.removeEventListener ('click', mouseHandlerGame);
+            document.removeEventListener ('keyup', keyHandlerGame, true);
+            backToMenu ()
+            return;
+
+        case "r":
+            CreateLevel();
+            reloadBackground();
+            renderGame();
+            placeButtons ();
+            return;
+
         case "ArrowRight":
             break;
 
