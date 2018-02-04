@@ -523,6 +523,12 @@ var CreateEntity = function (entityType, pos)
 
 var CreateLevel = function ()
 {
+    if (game.currentLevel == levelList.length)
+    {
+        canvas.removeEventListener ('click', mouseHandlerGame);
+        document.removeEventListener ('keyup', keyHandlerGame, true);
+        backToMenu ();
+    }
     var map = game.levels[game.currentLevel];
     var h = map.length;
     game.partCount = 0;
@@ -575,7 +581,7 @@ var check_game_state = function ()
     if (player.object.won)
     {
         console.log("he won");
-        if (game.currentLevel + 1 < game.levels.length)
+        if (game.currentLevel < game.levels.length)
         {
             game.currentLevel++;
             CreateLevel();
