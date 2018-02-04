@@ -1,16 +1,17 @@
-var entityList = [[]];
+var entities = [[]];
 
 var player = null;
 
 var level = 
 [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0]
 ];
 
 
@@ -18,10 +19,10 @@ var EntityType =
 {
     BLOCK : 0,
     HERO : 1,
-    INC_P : 2,
-    INC_PP : 3,
-    INC_M : 4,
-    INC_MM : 5,
+    WATER : 2,
+    FIRE : 3,
+    EARTH : 4,
+    AIR : 5,
     BLACKHOLE : 6
 };
 
@@ -32,6 +33,46 @@ Object.freeze(Entity);
 var Hero = function ()
 {
     this.speed = 1;
+    this.speedMax = 4;
+    this.isPullDown = false;
+
+    this.move = function (keyValue)
+    {
+        var x = player.pos.x;
+        var y = player.pos.y;
+        switch (keyValue)
+        {
+            case "ArrowRight":
+                x += player.speed;
+                break;
+        
+            case "ArrowLeft":
+                x -= player.speed;
+                break;
+        
+            case "ArrowDown":
+                y += player.speed;
+                break;
+
+            case "ArrowUp":
+                y -= player.speed;
+                break;
+
+            default:
+            console.log("key unhandled");
+            break;
+        }
+//        if (x && y)
+  //      {
+//
+    //    }
+  //      if ()
+  //      {
+//
+  //      }
+   //     entities[][] = ;
+    };
+
     console.log("Hero object created");
 };
 
@@ -40,24 +81,44 @@ var Block = function ()
     console.log("Block object created");
 };
 
-var IncP = function ()
+//Water slows player down
+var Water = function ()
 {
-    console.log("IncP object created");
+    console.log("Water object created");
+    this.alter = function (player)
+    {
+        player.speed = (player.speed < 1) ? 1 : player.speed - 1;
+    }
 };
 
-var IncPP = function ()
+//Fire speeds player up
+var Fire = function ()
 {
-    console.log("IncPP object created");
+    console.log("Fire object created");
+    this.alter = function (player)
+    {
+        player.speed = (player.speed > player.speedMax) ? speedMax : player.speed + 1;
+    }
 };
 
-var IncM = function ()
+//Earth pull you down
+var Earth = function ()
 {
-    console.log("IncM object created");
+    console.log("Earth object created");
+    this.alter = function (player)
+    {
+        player.isPullDown = true;        
+    }
 };
 
-var IncMM = function ()
+//
+var Air = function ()
 {
-    console.log("IncMM object created");
+    console.log("Air object created");
+    this.alter = function (player)
+    {
+        //DoSomething
+    }
 };
 
 var BlackHole = function ()
@@ -79,12 +140,6 @@ var Entity = function (object, entityType, pos)
     this.pos = pos;
 };
 
-//Interactable objects
-var Interactable = function(alter)
-{
-    this.alter = (typeof alter === 'function') ? alter : null;
-};
-
 var CreateEntity = function (entityType, pos)
 {
     var objTmp = null;
@@ -103,20 +158,20 @@ var CreateEntity = function (entityType, pos)
             objTmp = new BlackHole();
         break;
 
-        case EntityType.INC_P:
-            objTmp = new IncP();
+        case EntityType.FIRE:
+            objTmp = new Fire();
         break;
 
-        case EntityType.INC_PP:
-            objTmp = new IncPP();
+        case EntityType.WATER:
+            objTmp = new Water();
         break;
 
-        case EntityType.INC_M:
-            objTmp = new IncM();
+        case EntityType.EARTH:
+            objTmp = new Earth();
         break;
 
-        case EntityType.INC_MM:
-            objTmp = new IncMM();
+        case EntityType.AIR:
+            objTmp = new Air();
         break;
 
         case EntityType.BLOCK:
@@ -138,7 +193,7 @@ var CreateLevel = function (level)
     for (var i = 0; i < h; i++)
     {
         var w = level[i].length;
-        entityList.push([]);
+        entities.push([]);
         for (var j = 0; j < w; j++)
         {
             var entity = CreateEntity(level[i][j], new Pos(j, i));
@@ -147,20 +202,20 @@ var CreateLevel = function (level)
                 console.log("Error : unable to create entity");
                 return ;
             }
-            entityList[i].push(entity);
+            entities[i].push(entity);
         }
     }
 }
 
 ShowEntityList = function ()
 { 
-    var h = entityList.length;
+    var h = entities.length;
     for (var i = 0; i < h; i++)
     {
-        var w = entityList[i].length;
+        var w = entities[i].length;
         for (var j = 0; j < w; j++)
         {
-            process.stdout.write("[" + entityList[i][j].type + "]");
+            process.stdout.write("[" + entities[i][j].type + "]");
             if (j != w - 1)
                 process.stdout.write(", ");
         }
@@ -171,21 +226,41 @@ ShowEntityList = function ()
 var canvas = null;
 var ctx = null;
 
+var keyHandler = function (event)
+{
+    var code = event.key;
+    console.log(code);
+    switch (code)
+    {
+        case "ArrowRight":
+            break;
+        
+        case "ArrowLeft":
+            break;
+        
+        case "ArrowDown":
+            break;
+
+        case "ArrowUp":
+            break;
+
+        default:
+            console.log("key unhandled");
+            break;
+    }
+}
+
 var run_game = function ()
 {
     canvas = document.getElementById('game');
     if (canvas !== null && canvas.getContext)
     {
-        ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = 'rgb(200, 0, 0)';
-        ctx.fillRect(10, 10, 50, 50);
-
-        ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-        ctx.fillRect(30, 30, 50, 50);
-
         CreateLevel(level);
-        console.log(entityList);
+        console.log(entities);//Debug
+
+//      Render and EventSetup
+//        ctx = canvas.getContext('2d');
+        document.addEventListener('keyup', keyHandler, true);
     }
     else
     {
