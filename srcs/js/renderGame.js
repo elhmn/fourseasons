@@ -7,10 +7,10 @@ function renderGame ()
 	var x,y;
 	for (var i = 0; i < entities.length; i++)
 	{
-		x = mapX + i * caseWidth;
+		y = mapY + i * caseHeight;
 		for (var j = 0; j < entities[i].length; j++)
 		{
-			y = mapY + j * caseHeight;
+			x = mapX + j * caseWidth;
 			switch (entities[i][j].type)
 			{
 				case EntityType.BLOCK:
