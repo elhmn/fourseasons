@@ -8,15 +8,15 @@ var level1 =
 {
    map : [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 4, 0],
-            [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 4, 1, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            [0, 0, 0, 0, 0, 0, 3, 0, 0, 1],
+            [0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 4, 1],
+            [0, 0, 4, 0, 0, 3, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 3, 0, 1],
+            [0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [0, 0, 4, 1, 0, 0, 1, 0, 0, 1],
+            [0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         ],
 
         partCount : 0
@@ -64,7 +64,6 @@ var Hero = function ()
     this.collected = 0;
     this.isOnBlock = false;
     this.isOnAirInfluence = false;
-    this.wasOnEnd = false;
 
     this.move = function (keyValue)
     {
@@ -73,22 +72,24 @@ var Hero = function ()
         var old_y = player.pos.y;
         var n_x = player.pos.x;
         var n_y = player.pos.y;
-        switch (keyValue)
+        var mvt_speed = player.object.speed;
+
+        switch(keyValue)
         {
             case "ArrowRight":
-                n_x += player.object.speed;
+                n_x += mvt_speed;
                 break;
         
             case "ArrowLeft":
-                n_x -= player.object.speed;
+                n_x -= mvt_speed;
                 break;
         
             case "ArrowDown":
-                n_y += player.object.speed;
+                n_y += mvt_speed;
                 break;
 
             case "ArrowUp":
-                n_y -= player.object.speed;
+                n_y -= mvt_speed;
                 break;
 
             default:
@@ -97,26 +98,89 @@ var Hero = function ()
         }
 
         //Check map limits
-        var len = entities[0].length;
-        if (n_x >= len)
-            n_x = len - 1;
+        var w = entities[0].length;
+        if (n_x >= w)
+            n_x = w - 1;
         else if (n_x < 0)
             n_x = 0;
-        len = entities.length;
-        if (n_y >= len)
-            n_y = len - 1;
+        var h = entities.length;
+        if (n_y >= h)
+            n_y = h - 1;
         else if (n_y < 0)
             n_y = 0;
+
+        if (entities[n_y][n_x].type == EntityType.BLOCK)
+        {
+            switch(keyValue)
+            {
+                case "ArrowRight":
+                    while (old_x < n_x - 1)
+                    {
+                        if (entities[n_y][old_x] == EntityType.EARTH
+                            && entities[n_y][old_x] == EntityType.WATER
+                            && entities[n_y][old_x] == EntityType.BLOCK)
+                        {
+                            n_x = old_x;
+                            break;
+                        }
+                        old_x++;
+                    }
+                break;
+
+                case "ArrowLeft":
+                    while (old_x > n_x + 1)
+                    {
+                        if (entities[n_y][old_x] == EntityType.EARTH
+                            && entities[n_y][old_x] == EntityType.WATER
+                            && entities[n_y][old_x] == EntityType.BLOCK)
+                        {
+                            n_x = old_x;
+                            break;
+                        }
+                        old_x--;
+                    }
+                break;
+                
+                case "ArrowDown":
+                    while (old_y < n_y - 1)
+                    {
+                        if (entities[old_y][n_x] == EntityType.EARTH
+                            && entities[old_y][n_x] == EntityType.WATER
+                            && entities[old_y][n_x] == EntityType.BLOCK)
+                        {
+                            n_y = old_y;
+                            break;
+                        }
+                        old_y++;
+                    }
+                break;
+
+                case "ArrowUp":
+                    while (old_y > n_y + 1)
+                    {
+                        if (entities[old_y][n_x] == EntityType.EARTH
+                            && entities[old_y][n_x] == EntityType.WATER
+                            && entities[old_y][n_x] == EntityType.BLOCK)
+                        {
+                            n_y = old_y;
+                            break;
+                        }
+                        old_y--;
+                    }
+                break;
+                default:
+                        console.log("key unhandled");
+                break;
+            }
+        }
 
         switch (entities[n_y][n_x].type)
         {
             case EntityType.BLOCK:
-                player.object.move(keyValue);
+                console.log("I am a Block");
                 break;
 
             case EntityType.EMPTY:
-                if (!player.object.isOnBlock && !player.object.isOnAirInfluence)
-                {
                     var tmp = entities[n_y][n_x];
                     entities[n_y][n_x] = player;
                     player.pos = new Pos(n_x, n_y);
@@ -127,40 +191,31 @@ var Hero = function ()
                     }
                     else
                         entities[old_y][old_x] = tmp;
-                }
                 break;
 
             case EntityType.BLACKHOLE:
-                if (!player.object.isOnBlock && !player.object.isOnAirInfluence)
-                {
                     player.object.isAlive = false;
                     player.object.partCount++;
-                }
                 break;
 
             case EntityType.END:
                 if (player.object.canEndLevel)
                 {
-                    
+
                  //Start next level;
                  console.log("start next level");
                 }
                 else
                 {
-                    if (!player.object.isOnBlock && !player.object.isOnAirInfluence)
-                    {
+                        player.object.wasReplaced = true;
+                        player.object.repObject = entities[n_y][n_x];
                         entities[n_y][n_x] = player;
                         player.pos = new Pos(n_x, n_y);
-                        player.object.wasOnEnd = true;
-                    }
+                        player.object.wasOnEnd = true;//tmp
                 }
                 break;
 
             case EntityType.AIR:
-                if (player.object.isOnBlock)
-                {
-                    player.object.isOnBlock = false;
-                }
                 player.object.isOnAirInfluence = true;
                 console.log("AIR on ", n_x, ", ", n_y);
                 player.object.move(keyValue);
@@ -168,20 +223,12 @@ var Hero = function ()
                 break;
 
             case EntityType.EARTH:
-                if (player.object.isOnBlock)
-                {
-                    player.object.isOnBlock = false;
-                }
-                if (player.object.isOnAirInfluence)
-                {
-                    player.object.isOnAirInfluence = false;
-                }
                 player.object.isPullDown = true;
                 player.object.partCount++;
                 break;
 
             case EntityType.WATER:
-                player.object.speed--;
+                player.object.speed = (player.object.speed - 1 <= 0) ? 1 : player.object.speed - 1;
                 player.object.partCount++;
                 entities[n_y][n_x] = player;
                 player.pos = new Pos(n_x, n_y);
@@ -189,18 +236,12 @@ var Hero = function ()
                 break;
 
             case EntityType.FIRE:
-                player.object.speed++;
+                player.object.speed = (player.object.speed + 1 > player.object.speedMax) ? player.object.speedMax : player.object.speed + 1;
                 player.object.partCount++;
                 entities[n_y][n_x] = player;
                 player.pos = new Pos(n_x, n_y);
                 entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
                 break;
-        }
-
-        //On Air Element influence
-        if (player.object.isOnAirInfluence)
-        {
-            player.object.move(keyValue);
         }
     };
 
@@ -401,6 +442,7 @@ var run_game = function ()
         document.addEventListener('keyup', keyHandler, false);
         reloadBackground();
         renderGame();
+        placeButtons ();
     }
     else
     {
