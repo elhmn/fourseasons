@@ -4,27 +4,73 @@ var entities = [];
 
 var player = null;
 
-var level1 =
+var levelList = 
+[
+    //l1
+    [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 2, 4, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 7, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ],
+
+    //l2
+    [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 4, 1],
+        [0, 0, 0, 5, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 3, 0, 1],
+        [0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ],
+
+    //l3
+    [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 1, 2, 0, 0, 0, 0, 0, 0, 1],
+        [0, 1, 0, 0, 0, 0, 0, 0, 4, 1],
+        [0, 1, 0, 5, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0, 3, 0, 1],
+        [0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+        [0, 1, 0, 1, 0, 0, 1, 0, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ],
+
+    //l4
+    [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 0, 1, 0, 0, 0, 1],
+        [0, 1, 0, 0, 0, 1, 1, 2, 0, 1],
+        [0, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+        [0, 1, 1, 1, 0, 1, 0, 0, 1, 1],
+        [0, 1, 0, 0, 0, 1, 0, 0, 1, 1],
+        [0, 1, 1, 1, 0, 1, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+];
+
+var game = 
 {
-	map : [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
-            [0, 0, 0, 0, 0, 0, 3, 0, 0, 1],
-            [0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 4, 1],
-            [0, 0, 6, 5, 0, 3, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 3, 0, 1],
-            [0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-            [0, 0, 4, 1, 0, 0, 1, 0, 0, 1],
-            [0, 0, 7, 1, 1, 1, 1, 0, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-        ],
-
-	partCount : 0,
-
+    levels : levelList,
+    currentLevel : 0,
+    partCount : 0,
 	posXEnd : 0,
-
 	posYEnd : 0
-};
+}
 
 
 var EntityType =
@@ -57,10 +103,40 @@ var Entity = function (object, entityType, pos)
     this.pos = pos;
 };
 
+var EntityType =
+{
+	EMPTY : 0,
+	BLOCK : 1,
+	HERO : 2,
+	WATER : 3,
+	FIRE : 4,
+	EARTH : 5,
+	AIR : 6,
+	BLACKHOLE : 7,
+	END : 8
+};
+
+//Set object as constant
+Object.freeze(Entity);
+
+var Pos = function (x, y)
+{
+    this.x = x;
+    this.y = y;
+};
+
+//Base game object class
+var Entity = function (object, entityType, pos)
+{
+    this.type = entityType;
+    this.object = object;
+    this.pos = pos;
+};
+
 //Hero There must only be one hero in the game
 var Hero = function ()
 {
-	this.won = false;
+    this.won = false;
     this.speed = 1;
     this.speedMax = 10;
     this.isAlive = true;
@@ -78,7 +154,7 @@ var Hero = function ()
 		var xAxis;
 		var mvt;
 
-		console.log ("Player Particule Current Count = " + player.object.collected + " | Total Particules on Level = " + level1.partCount);
+		console.log ("Player Particule Current Count = " + player.object.collected + " | Total Particules on Level = " + game.partCount);
 
         switch(keyValue)
         {
@@ -198,7 +274,7 @@ var Hero = function ()
 							moveOver = true;
 						if (moveOver || tmp_x == max - mvt)
 						{
-							if (player.object.collected == level1.partCount)
+							if (player.object.collected == game.partCount)
 								player.object.won = true;
 							entities[n_y][tmp_x] = player;
 							player.pos = new Pos(tmp_x, n_y);
@@ -287,7 +363,7 @@ var Hero = function ()
 							moveOver = true;
 						if (moveOver || tmp_y == max - mvt)
 						{
-							if (player.object.collected == level1.partCount)
+							if (player.object.collected == game.partCount)
 								player.object.won = true;
 							entities[tmp_y][n_x] = player;
 							player.pos = new Pos(n_x, tmp_y);
@@ -310,11 +386,11 @@ var Hero = function ()
 
 	this.restoreEnd = function ()
     {
-		if (player.pos.x == level1.posXEnd && player.pos.y == level1.posYEnd)
+		if (player.pos.x == game.posXEnd && player.pos.y == game.posYEnd)
 			return;
 		else
 		{
-			entities[level1.posYEnd][level1.posXEnd] = CreateEntity(EntityType.END, new Pos(level1.posXEnd, level1.posYEnd));
+			entities[game.posYEnd][game.posXEnd] = CreateEntity(EntityType.END, new Pos(game.posXEnd, game.posYEnd));
 			player.object.imOnEnd = false;
 		}
 	};
@@ -385,22 +461,22 @@ var CreateEntity = function (entityType, pos)
 
         case EntityType.FIRE:
             objTmp = new Fire();
-            level1.partCount++;
+            game.partCount++;
         break;
 
         case EntityType.WATER:
             objTmp = new Water();
-            level1.partCount++;
+            game.partCount++;
         break;
 
         case EntityType.EARTH:
             objTmp = new Earth();
-            level1.partCount++;
+            game.partCount++;
         break;
 
         case EntityType.AIR:
             objTmp = new Air();
-            level1.partCount++;
+            game.partCount++;
         break;
 
         case EntityType.BLOCK:
@@ -413,8 +489,8 @@ var CreateEntity = function (entityType, pos)
 
         case EntityType.END:
             objTmp = new End();
-			level1.posXEnd = pos.x;
-			level1.posYEnd = pos.y;
+			game.posXEnd = pos.x;
+			game.posYEnd = pos.y;
         break;
 
         default:
@@ -429,10 +505,13 @@ var CreateEntity = function (entityType, pos)
 };
 
 
-var CreateLevel = function (map)
+var CreateLevel = function ()
 {
+    var map = game.levels[game.currentLevel];
     var h = map.length;
-    level1.partCount = 0;
+    game.partCount = 0;
+    player = null;
+    entities = [];
     for (var i = 0; i < h; i++)
     {
         var w = map[i].length;
@@ -448,6 +527,7 @@ var CreateLevel = function (map)
             entities[i].push(entity);
         }
     }
+    console.log(entities);//Debug
 }
 
 /*
@@ -472,15 +552,18 @@ var check_game_state = function ()
 {
     if (! player.object.isAlive)
     {
+        CreateLevel();
         //reset level;
-        console.log("reset level");
-        player.object.isAlive = true;
     }
 
     if (player.object.won)
     {
-        //go to next level
-		console.log ("GAME WON");
+        console.log("he won");
+        if (game.currentLevel + 1 < game.levels.length)
+        {
+            game.currentLevel++;
+            CreateLevel();
+        }
     }
 }
 
@@ -493,7 +576,11 @@ var mouseHandlerGame = function (event)
 
 	if (checkZone (reloadBox, x, y))
 	{
-		console.log ("Reload");
+        CreateLevel();
+        reloadBackground();
+        renderGame();
+        placeButtons ();
+        console.log ("Reload");
 	}
 
 	if (checkZone (backBox, x, y))
@@ -539,8 +626,8 @@ var run_game = function ()
 {
     if (canvas !== null && canvas.getContext)
     {
-        CreateLevel(level1.map);
-        console.log(entities);//Debug
+        game.currentLevel = 0;
+        CreateLevel();
 
 		canvas.addEventListener ('click', mouseHandlerGame);
         document.addEventListener('keyup', keyHandlerGame, false);
@@ -551,6 +638,3 @@ var run_game = function ()
     else
         console.log("Error : Canvas not Supported");
 }
-
-//setInterval(() => { ShowEntityList(); }, 300);
-// ShowEntityList();
