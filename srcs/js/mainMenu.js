@@ -14,10 +14,10 @@ function setBackground ()
 	{
 		var ctx = canvas.getContext ('2d');
 		ctx.fillStyle = '#3A3A3A';
-		ctx.fillRect (0, 0, 400, 400)
+		ctx.fillRect (0, 0, 400, 400);
 
 		ctx.fillStyle = '#FFFFFF';
-		ctx.fillRect (mapX, mapY, mapWidth, mapHeight)
+		ctx.fillRect (mapX, mapY, mapWidth, mapHeight);
 
 		ctx.strokeStyle = '#E2E2E2';
 		ctx.beginPath ();

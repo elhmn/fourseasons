@@ -42,6 +42,7 @@ function renderGame ()
 				case EntityType.AIR:
 					console.log ("case AIR");
 					ctx.drawImage (air, x, y, caseWidth, caseHeight);
+					break;
 				default:
 					console.log ("case VOID (default)");
 					break;
