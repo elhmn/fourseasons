@@ -30,7 +30,8 @@ var EntityType =
     FIRE : 4,
     EARTH : 5,
     AIR : 6,
-    BLACKHOLE : 7
+    BLACKHOLE : 7,
+    END : 8
 };
 
 //Set object as constant
@@ -47,6 +48,7 @@ var Hero = function ()
     this.collected = 0;
     this.isOnBlock = false;
     this.isOnAirInfluence = false;
+    this.wasOnEnd = false;
 
     this.move = function (keyValue)
     {
@@ -98,8 +100,14 @@ var Hero = function ()
                 if (!isOnBlock && !isOnAirInfluence)
                 {
                     var tmp = Entities[y][x];
-                    Entities[y][x] = player;
-                    Entities[old_y][old_x] = tmp;
+                    entities[y][x] = player;
+                    if (wasOnEnd)
+                    {
+                        entities[old_y][old_x] = EntityType.END;
+                        wasOnEnd = false;
+                    }
+                    else
+                        entities[old_y][old_x] = tmp;
                 }
                 break;
 
@@ -108,6 +116,23 @@ var Hero = function ()
                 {
                     this.isAlive = false;
                     player.partCount++;
+                }
+                break;
+
+            case EntityType.END:
+                if (player.canEndLevel)
+                {
+                    
+                 //Start next level;
+                 console.log("start next level");
+                }
+                else
+                {
+                    if (!isOnBlock && !isOnAirInfluence)
+                    {
+                        Entities[y][x] = player;
+                        wasOnEnd = true;
+                    }
                 }
                 break;
 
@@ -138,11 +163,15 @@ var Hero = function ()
             case EntityType.WATER:
                 player.speed--;
                 player.partCount++;
+                entities[y][x] = player;
+                entities[old_y][old_x] = EntityType.EMPTY;
                 break;
 
             case EntityType.FIRE:
                 player.speed++;
                 player.partCount++;
+                entities[y][x] = player;
+                entities[old_y][old_x] = EntityType.EMPTY;
                 break;
         }
 
@@ -240,18 +269,22 @@ var CreateEntity = function (entityType, pos)
 
         case EntityType.FIRE:
             objTmp = new Fire();
+            level1.partCount++;
         break;
 
         case EntityType.WATER:
             objTmp = new Water();
+            level1.partCount++;
         break;
 
         case EntityType.EARTH:
             objTmp = new Earth();
+            level1.partCount++;
         break;
 
         case EntityType.AIR:
             objTmp = new Air();
+            level1.partCount++;
         break;
 
         case EntityType.BLOCK:
@@ -270,6 +303,7 @@ var CreateEntity = function (entityType, pos)
 var CreateLevel = function (level)
 {
     var h = level.length;
+    level.partCount = 0;
     for (var i = 0; i < h; i++)
     {
         var w = level[i].length;
