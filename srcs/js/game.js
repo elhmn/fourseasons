@@ -19,7 +19,11 @@ var level1 =
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         ],
 
-	partCount : 0
+	partCount : 0,
+
+	posXEnd : 0,
+
+	posYEnd : 0
 };
 
 
@@ -152,8 +156,8 @@ var Hero = function ()
 							moveOver = true;
 						break;
 					case EntityType.BLACKHOLE:
-						player.object.isAlive = false;
-						moveOver = true;
+						if (moveOver || tmp_x == max - mvt)
+							player.object.isAlive = false;
 						break;
 					case EntityType.FIRE:
 						if (blockIsNext)
@@ -191,6 +195,20 @@ var Hero = function ()
 						player.object.collected++;
 						entities[n_y][tmp_x] = CreateEntity(EntityType.EMPTY, new Pos(tmp_x, n_y));
 						break;
+//					case EntityType.END:
+//						if (blockIsNext)
+//							moveOver = true;
+//						if (moveOver || tmp_x == max - mvt)
+//						{
+//							if ( )
+//							player.object.speed = (player.object.speed - 1 <= 0) ? 1 : player.object.speed - 1;
+//							player.object.collected++;
+//							entities[n_y][tmp_x] = player;
+//							player.pos = new Pos(tmp_x, n_y);
+//							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
+//						}
+//
+//						break;
 					default:
 						break;
 				}
