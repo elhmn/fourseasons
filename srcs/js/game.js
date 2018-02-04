@@ -593,7 +593,32 @@ var mouseHandlerGame = function (event)
 		canvas.removeEventListener ('click', mouseHandlerGame);
 		document.removeEventListener ('keyup', keyHandlerGame, true);
 		backToMenu ();
-	}
+    }
+
+    if (checkZone (leftBox, x, y))
+    {
+        player.object.move("ArrowLeft");
+        check_game_state();
+        renderGame();
+    }
+    else if (checkZone (rightBox, x, y))
+    {
+        player.object.move("ArrowRight");
+        check_game_state();
+        renderGame();
+    }
+    else if (checkZone (topBox, x, y))
+    {
+        player.object.move("ArrowUp");
+        check_game_state();
+        renderGame();
+    }
+    else if (checkZone (bottomBox, x, y))
+    {
+        player.object.move("ArrowDown");
+        check_game_state();
+        renderGame();
+    }
 }
 
 var keyHandlerGame = function (event)
