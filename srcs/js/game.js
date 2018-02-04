@@ -60,14 +60,12 @@ var Entity = function (object, entityType, pos)
 //Hero There must only be one hero in the game
 var Hero = function ()
 {
+	this.won = false;
     this.speed = 1;
     this.speedMax = 10;
-    this.isPullDown = false;
     this.isAlive = true;
-    this.canEndLevel = false;
     this.collected = 0;
-    this.isOnBlock = false;
-    this.isOnAirInfluence = false;
+	this.imOnEnd = false;
 
     this.move = function (keyValue)
     {
@@ -195,20 +193,19 @@ var Hero = function ()
 						player.object.collected++;
 						entities[n_y][tmp_x] = CreateEntity(EntityType.EMPTY, new Pos(tmp_x, n_y));
 						break;
-//					case EntityType.END:
-//						if (blockIsNext)
-//							moveOver = true;
-//						if (moveOver || tmp_x == max - mvt)
-//						{
-//							if ( )
-//							player.object.speed = (player.object.speed - 1 <= 0) ? 1 : player.object.speed - 1;
-//							player.object.collected++;
-//							entities[n_y][tmp_x] = player;
-//							player.pos = new Pos(tmp_x, n_y);
-//							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
-//						}
-//
-//						break;
+					case EntityType.END:
+						if (blockIsNext)
+							moveOver = true;
+						if (moveOver || tmp_x == max - mvt)
+						{
+							if (player.object.collected == level1.partCount)
+								player.object.won = true;
+							entities[n_y][tmp_x] = player;
+							player.pos = new Pos(tmp_x, n_y);
+							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
+							player.object.imOnEnd = true;
+						}
+						break;
 					default:
 						break;
 				}
@@ -285,6 +282,19 @@ var Hero = function ()
 						player.object.collected++;
 						entities[tmp_y][n_x] = CreateEntity(EntityType.EMPTY, new Pos(n_x, tmp_y));
 						break;
+					case EntityType.END:
+						if (blockIsNext)
+							moveOver = true;
+						if (moveOver || tmp_y == max - mvt)
+						{
+							if (player.object.collected == level1.partCount)
+								player.object.won = true;
+							entities[tmp_y][n_x] = player;
+							player.pos = new Pos(n_x, tmp_y);
+							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
+							player.object.imOnEnd = true;
+						}
+						break;
 					default:
 						break;
 				}
@@ -293,7 +303,21 @@ var Hero = function ()
 					break;
 			}
 		}
+
+		if (player.object.imOnEnd)
+			 player.object.restoreEnd ();
     };
+
+	this.restoreEnd = function ()
+    {
+		if (player.pos.x == level1.posXEnd && player.pos.y == level1.posYEnd)
+			return;
+		else
+		{
+			entities[level1.posYEnd][level1.posXEnd] = CreateEntity(EntityType.END, new Pos(level1.posXEnd, level1.posYEnd));
+			player.object.imOnEnd = false;
+		}
+	};
 
     console.log("Hero object created");
 };
@@ -389,6 +413,8 @@ var CreateEntity = function (entityType, pos)
 
         case EntityType.END:
             objTmp = new End();
+			level1.posXEnd = pos.x;
+			level1.posYEnd = pos.y;
         break;
 
         default:
@@ -444,17 +470,17 @@ var ShowEntityList = function ()
 
 var check_game_state = function ()
 {
-    if (!player.object.isAlive)
+    if (! player.object.isAlive)
     {
         //reset level;
         console.log("reset level");
         player.object.isAlive = true;
     }
 
-    if (player.object.collected == level1.partCount)
+    if (player.object.won)
     {
-        player.object.canEndLevel = true;
-        //
+        //go to next level
+		console.log ("GAME WON");
     }
 }
 

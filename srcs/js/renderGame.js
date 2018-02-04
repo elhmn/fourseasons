@@ -15,6 +15,7 @@ function renderGame ()
     if (canvas !== null && canvas.getContext)
     {
 		reloadBackground ();
+        placeButtons ();
 
 		var ctx = canvas.getContext ("2d");
 		var x,y;
