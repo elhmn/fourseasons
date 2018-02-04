@@ -10,13 +10,13 @@ var level1 =
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 4, 0],
+            [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 6, 0, 0, 0, 0, 0, 3, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 4, 0, 0],
-            [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 7, 0, 0, 0]
+            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 4, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
 
         partCount : 0
@@ -185,7 +185,7 @@ var Hero = function ()
                 player.object.partCount++;
                 entities[n_y][n_x] = player;
                 player.pos = new Pos(n_x, n_y);
-                entities[old_y][old_x] = EntityType.EMPTY;
+                entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
                 break;
 
             case EntityType.FIRE:
@@ -193,7 +193,7 @@ var Hero = function ()
                 player.object.partCount++;
                 entities[n_y][n_x] = player;
                 player.pos = new Pos(n_x, n_y);
-                entities[old_y][old_x] = EntityType.EMPTY;
+                entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
                 break;
         }
 
