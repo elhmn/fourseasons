@@ -6,7 +6,7 @@ var player = null;
 
 var level1 =
 {
-  map : [
+	map : [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
             [0, 0, 0, 0, 0, 0, 3, 0, 0, 1],
             [0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
@@ -20,21 +20,21 @@ var level1 =
         ],
 
 	partCount : 0
-    };
+};
 
 
-    var EntityType =
-    {
-        EMPTY : 0,
-        BLOCK : 1,
-        HERO : 2,
-        WATER : 3,
-        FIRE : 4,
-        EARTH : 5,
-        AIR : 6,
-        BLACKHOLE : 7,
-        END : 8
-    };
+var EntityType =
+{
+	EMPTY : 0,
+	BLOCK : 1,
+	HERO : 2,
+	WATER : 3,
+	FIRE : 4,
+	EARTH : 5,
+	AIR : 6,
+	BLACKHOLE : 7,
+	END : 8
+};
 
 //Set object as constant
 Object.freeze(Entity);
@@ -75,6 +75,8 @@ var Hero = function ()
         var mvt_speed = player.object.speed;
 		var xAxis;
 		var mvt;
+
+		console.log ("Player Particule Current Count = " + player.object.collected + " | Total Particules on Level = " + level1.partCount);
 
         switch(keyValue)
         {
@@ -159,7 +161,7 @@ var Hero = function ()
 						if (moveOver || tmp_x == max - mvt)
 						{
 							player.object.speed = (player.object.speed + 1 > player.object.speedMax) ? player.object.speedMax : player.object.speed + 1;
-							player.object.partCount++;
+							player.object.collected++;
 							entities[n_y][tmp_x] = player;
 							player.pos = new Pos(tmp_x, n_y);
 							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
@@ -171,7 +173,7 @@ var Hero = function ()
 						if (moveOver || tmp_x == max - mvt)
 						{
 							player.object.speed = (player.object.speed - 1 <= 0) ? 1 : player.object.speed - 1;
-							player.object.partCount++;
+							player.object.collected++;
 							entities[n_y][tmp_x] = player;
 							player.pos = new Pos(tmp_x, n_y);
 							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
@@ -179,15 +181,14 @@ var Hero = function ()
 						break;
 					case EntityType.EARTH:
 						moveOver = true;
-						player.object.partCount++;
+						player.object.collected++;
 						entities[n_y][tmp_x] = player;
 						player.pos = new Pos(tmp_x, n_y);
 						entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
 						break;
 					case EntityType.AIR:
 						max = (mvt > 0) ? w : -1;
-						console.log("AIR on ", tmp_x, ", ", n_y);
-						player.object.partCount++;
+						player.object.collected++;
 						entities[n_y][tmp_x] = CreateEntity(EntityType.EMPTY, new Pos(tmp_x, n_y));
 						break;
 					default:
@@ -225,7 +226,6 @@ var Hero = function ()
 						}
 						else
 							moveOver = true;
-						console.log("I am a Block");
 						break;
 					case EntityType.BLACKHOLE:
 						if (moveOver || tmp_y == max - mvt)
@@ -237,7 +237,7 @@ var Hero = function ()
 						if (moveOver || tmp_y == max - mvt)
 						{
 							player.object.speed = (player.object.speed + 1 > player.object.speedMax) ? player.object.speedMax : player.object.speed + 1;
-							player.object.partCount++;
+							player.object.collected++;
 							entities[tmp_y][n_x] = player;
 							player.pos = new Pos(n_x, tmp_y);
 							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
@@ -249,7 +249,7 @@ var Hero = function ()
 						if (moveOver || tmp_y == max - mvt)
 						{
 							player.object.speed = (player.object.speed - 1 <= 0) ? 1 : player.object.speed - 1;
-							player.object.partCount++;
+							player.object.collected++;
 							entities[tmp_y][n_x] = player;
 							player.pos = new Pos(n_x, tmp_y);
 							entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
@@ -257,15 +257,14 @@ var Hero = function ()
 						break;
 					case EntityType.EARTH:
 						moveOver = true;
-						player.object.partCount++;
+						player.object.collected++;
 						entities[tmp_y][n_x] = player;
 						player.pos = new Pos(n_x, tmp_y);
 						entities[old_y][old_x] = CreateEntity(EntityType.EMPTY, new Pos(old_x, old_y));
 						break;
 					case EntityType.AIR:
 						max = (mvt > 0) ? h : -1;
-						console.log("AIR on ", n_x, ", ", tmp_y);
-						player.object.partCount++;
+						player.object.collected++;
 						entities[tmp_y][n_x] = CreateEntity(EntityType.EMPTY, new Pos(n_x, tmp_y));
 						break;
 					default:
@@ -506,10 +505,7 @@ var run_game = function ()
         placeButtons ();
     }
     else
-    {
         console.log("Error : Canvas not Supported");
-        return ;
-    }
 }
 
 //setInterval(() => { ShowEntityList(); }, 300);
