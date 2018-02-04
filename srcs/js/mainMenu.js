@@ -93,8 +93,8 @@ function setPlayButton ()
 
 function checkZone (Box, x, y)
 {
-	if ((enterBox [0] <= x && x <= enterBox [0] + enterBox [2]) &&
-		(enterBox [1] <= y && y <= enterBox [1] + enterBox [3]))
+	if ((Box [0] <= x && x <= Box [0] + Box [2]) &&
+		(Box [1] <= y && y <= Box [1] + Box [3]))
 		return true;
 	return false;
 }
